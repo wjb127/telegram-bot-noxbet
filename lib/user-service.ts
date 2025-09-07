@@ -142,7 +142,7 @@ export async function getAllUserSettings(userId: number) {
     if (error) throw error
     
     // key-value 객체로 변환
-    const settings: Record<string, any> = {}
+    const settings: Record<string, unknown> = {}
     data?.forEach(item => {
       settings[item.key] = item.value
     })
