@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function handleMessage(message: any) {
+async function handleMessage(message: NonNullable<TelegramUpdate['message']>) {
   const chatId = message.chat.id
   const text = message.text
   const userId = message.from.id
@@ -106,7 +106,7 @@ ${message.from.last_name ? `성: ${message.from.last_name}` : ''}
   }
 }
 
-async function handleCallbackQuery(callbackQuery: any) {
+async function handleCallbackQuery(callbackQuery: NonNullable<TelegramUpdate['callback_query']>) {
   const callbackId = callbackQuery.id
   const chatId = callbackQuery.message?.chat.id
   const data = callbackQuery.data

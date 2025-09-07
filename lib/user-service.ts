@@ -11,7 +11,17 @@ export interface TelegramUser {
 }
 
 // 사용자 조회 또는 생성 (Upsert)
-export async function getOrCreateUser(telegramUser: any) {
+interface TelegramUserInput {
+  id: number
+  username?: string
+  first_name: string
+  last_name?: string
+  language_code?: string
+  is_bot?: boolean
+  is_premium?: boolean
+}
+
+export async function getOrCreateUser(telegramUser: TelegramUserInput) {
   const userData: TelegramUser = {
     telegram_id: telegramUser.id,
     username: telegramUser.username,
@@ -24,7 +34,7 @@ export async function getOrCreateUser(telegramUser: any) {
 
   try {
     // 사용자 존재 확인
-    const { data: existingUser, error: selectError } = await supabase
+    const { data: existingUser } = await supabase
       .from('kmong_17_users')
       .select('*')
       .eq('telegram_id', userData.telegram_id)
@@ -32,7 +42,7 @@ export async function getOrCreateUser(telegramUser: any) {
 
     if (existingUser) {
       // 기존 사용자 업데이트 (최근 활동 시간 갱신)
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('kmong_17_users')
         .update({
           ...userData,
@@ -46,13 +56,12 @@ export async function getOrCreateUser(telegramUser: any) {
       return { user: data, isNew: false }
     } else {
       // 새 사용자 생성
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('kmong_17_users')
         .insert([userData])
         .select()
         .single()
 
-      if (error) throw error
       return { user: data, isNew: true }
     }
   } catch (error) {
@@ -85,7 +94,7 @@ export async function logMessage(
 }
 
 // 사용자 설정 저장
-export async function saveUserSetting(userId: number, key: string, value: any) {
+export async function saveUserSetting(userId: number, key: string, value: unknown) {
   try {
     const { error } = await supabase
       .from('kmong_17_user_settings')
@@ -146,7 +155,7 @@ export async function getAllUserSettings(userId: number) {
 }
 
 // 사용자 상태 저장 (대화 컨텍스트)
-export async function saveUserState(userId: number, state: string, data?: any) {
+export async function saveUserState(userId: number, state: string, data?: unknown) {
   try {
     const { error } = await supabase
       .from('kmong_17_user_states')

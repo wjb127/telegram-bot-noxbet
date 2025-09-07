@@ -29,13 +29,13 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function handleMessage(message: any) {
+async function handleMessage(message: NonNullable<TelegramUpdate['message']>) {
   const chatId = message.chat.id
   const text = message.text
   const telegramUser = message.from
   
   // 사용자 자동 등록/업데이트
-  const { user, isNew } = await getOrCreateUser(telegramUser)
+  const { isNew } = await getOrCreateUser(telegramUser)
   
   // 신규 사용자 환영 메시지
   if (isNew) {
@@ -44,7 +44,7 @@ async function handleMessage(message: any) {
   
   // 메시지 로깅
   const messageType = text?.startsWith('/') ? 'command' : 'text'
-  await logMessage(telegramUser.id, text, messageType, chatId)
+  await logMessage(telegramUser.id, text || '', messageType, chatId)
   
   // 사용자 상태 확인
   const userState = await getUserState(telegramUser.id)
@@ -126,7 +126,7 @@ async function handleMessage(message: any) {
     let recentCommandsList = '없음'
     if (stats.recentCommands.length > 0) {
       recentCommandsList = stats.recentCommands
-        .map((cmd: any) => `• ${cmd.message_text}`)
+        .map((cmd) => `• ${cmd.message_text}`)
         .join('\n')
     }
     
@@ -182,7 +182,7 @@ GDPR 준수를 위해 언제든 데이터를 다운로드하거나 삭제할 수
   }
 }
 
-async function handleCallbackQuery(callbackQuery: any) {
+async function handleCallbackQuery(callbackQuery: NonNullable<TelegramUpdate['callback_query']>) {
   const callbackId = callbackQuery.id
   const chatId = callbackQuery.message?.chat.id
   const data = callbackQuery.data

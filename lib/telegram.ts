@@ -47,7 +47,7 @@ export interface TelegramUpdate {
   }
 }
 
-export async function sendMessage(chatId: number, text: string, options?: any) {
+export async function sendMessage(chatId: number, text: string, options?: Record<string, unknown>) {
   try {
     const response = await axios.post(`${TELEGRAM_API}/sendMessage`, {
       chat_id: chatId,

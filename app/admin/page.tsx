@@ -15,7 +15,7 @@ export default function AdminPage() {
       })
       const data = await response.json()
       setStatus(data.success ? '✅ Webhook 설정 완료' : '❌ 설정 실패')
-    } catch (error) {
+    } catch {
       setStatus('❌ 오류 발생')
     }
   }
@@ -27,7 +27,7 @@ export default function AdminPage() {
       })
       const data = await response.json()
       setStatus(data.success ? '✅ Webhook 제거 완료' : '❌ 제거 실패')
-    } catch (error) {
+    } catch {
       setStatus('❌ 오류 발생')
     }
   }
