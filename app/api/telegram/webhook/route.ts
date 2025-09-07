@@ -128,7 +128,7 @@ async function handleCallbackQuery(callbackQuery: any) {
 async function logUserActivity(userId: number, username: string, text: string, type: string) {
   try {
     const { error } = await supabase
-      .from('telegram_logs')
+      .from('kmong_17_telegram_logs')
       .insert({
         user_id: userId,
         username,
@@ -146,7 +146,7 @@ async function logUserActivity(userId: number, username: string, text: string, t
 async function getUserStats(userId: number) {
   try {
     const { data, error } = await supabase
-      .from('telegram_logs')
+      .from('kmong_17_telegram_logs')
       .select('created_at')
       .eq('user_id', userId)
       .order('created_at', { ascending: true })

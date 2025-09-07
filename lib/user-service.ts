@@ -25,7 +25,7 @@ export async function getOrCreateUser(telegramUser: any) {
   try {
     // 사용자 존재 확인
     const { data: existingUser, error: selectError } = await supabase
-      .from('users')
+      .from('kmong_17_users')
       .select('*')
       .eq('telegram_id', userData.telegram_id)
       .single()
@@ -33,7 +33,7 @@ export async function getOrCreateUser(telegramUser: any) {
     if (existingUser) {
       // 기존 사용자 업데이트 (최근 활동 시간 갱신)
       const { data, error } = await supabase
-        .from('users')
+        .from('kmong_17_users')
         .update({
           ...userData,
           last_active_at: new Date().toISOString(),
@@ -47,7 +47,7 @@ export async function getOrCreateUser(telegramUser: any) {
     } else {
       // 새 사용자 생성
       const { data, error } = await supabase
-        .from('users')
+        .from('kmong_17_users')
         .insert([userData])
         .select()
         .single()
@@ -70,7 +70,7 @@ export async function logMessage(
 ) {
   try {
     const { error } = await supabase
-      .from('messages')
+      .from('kmong_17_messages')
       .insert({
         user_id: userId,
         message_text: messageText,
@@ -88,7 +88,7 @@ export async function logMessage(
 export async function saveUserSetting(userId: number, key: string, value: any) {
   try {
     const { error } = await supabase
-      .from('user_settings')
+      .from('kmong_17_user_settings')
       .upsert({
         user_id: userId,
         key,
@@ -108,7 +108,7 @@ export async function saveUserSetting(userId: number, key: string, value: any) {
 export async function getUserSetting(userId: number, key: string) {
   try {
     const { data, error } = await supabase
-      .from('user_settings')
+      .from('kmong_17_user_settings')
       .select('value')
       .eq('user_id', userId)
       .eq('key', key)
@@ -126,7 +126,7 @@ export async function getUserSetting(userId: number, key: string) {
 export async function getAllUserSettings(userId: number) {
   try {
     const { data, error } = await supabase
-      .from('user_settings')
+      .from('kmong_17_user_settings')
       .select('key, value')
       .eq('user_id', userId)
 
@@ -149,7 +149,7 @@ export async function getAllUserSettings(userId: number) {
 export async function saveUserState(userId: number, state: string, data?: any) {
   try {
     const { error } = await supabase
-      .from('user_states')
+      .from('kmong_17_user_states')
       .upsert({
         user_id: userId,
         current_state: state,
@@ -169,7 +169,7 @@ export async function saveUserState(userId: number, state: string, data?: any) {
 export async function getUserState(userId: number) {
   try {
     const { data, error } = await supabase
-      .from('user_states')
+      .from('kmong_17_user_states')
       .select('current_state, state_data')
       .eq('user_id', userId)
       .single()
@@ -187,20 +187,20 @@ export async function getUserStats(userId: number) {
   try {
     // 총 메시지 수
     const { count: messageCount } = await supabase
-      .from('messages')
+      .from('kmong_17_messages')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
 
     // 사용자 정보
     const { data: userData } = await supabase
-      .from('users')
+      .from('kmong_17_users')
       .select('created_at, last_active_at')
       .eq('telegram_id', userId)
       .single()
 
     // 최근 명령어
     const { data: recentCommands } = await supabase
-      .from('messages')
+      .from('kmong_17_messages')
       .select('message_text, created_at')
       .eq('user_id', userId)
       .eq('message_type', 'command')
@@ -228,10 +228,10 @@ export async function getUserStats(userId: number) {
 export async function deleteUserData(userId: number) {
   try {
     // 모든 관련 데이터 삭제
-    await supabase.from('messages').delete().eq('user_id', userId)
-    await supabase.from('user_settings').delete().eq('user_id', userId)
-    await supabase.from('user_states').delete().eq('user_id', userId)
-    await supabase.from('users').delete().eq('telegram_id', userId)
+    await supabase.from('kmong_17_messages').delete().eq('user_id', userId)
+    await supabase.from('kmong_17_user_settings').delete().eq('user_id', userId)
+    await supabase.from('kmong_17_user_states').delete().eq('user_id', userId)
+    await supabase.from('kmong_17_users').delete().eq('telegram_id', userId)
 
     return { success: true }
   } catch (error) {
