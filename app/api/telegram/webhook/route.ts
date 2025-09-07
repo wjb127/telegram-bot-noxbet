@@ -25,7 +25,7 @@ async function handleMessage(message: NonNullable<TelegramUpdate['message']>) {
   const userId = message.from.id
   const username = message.from.username || message.from.first_name
   
-  await logUserActivity(userId, username, text, 'message')
+  await logUserActivity(userId, username, text || '', 'message')
   
   if (!text) return
   
@@ -110,6 +110,8 @@ async function handleCallbackQuery(callbackQuery: NonNullable<TelegramUpdate['ca
   const callbackId = callbackQuery.id
   const chatId = callbackQuery.message?.chat.id
   const data = callbackQuery.data
+  
+  if (!chatId) return
   
   if (data === 'settings') {
     await sendMessage(chatId, '⚙️ 설정 메뉴 (개발 중)')

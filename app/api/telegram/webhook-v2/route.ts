@@ -51,12 +51,12 @@ async function handleMessage(message: NonNullable<TelegramUpdate['message']>) {
   
   // 상태 기반 처리
   if (userState?.current_state === 'waiting_feedback') {
-    await handleFeedback(chatId, telegramUser.id, text)
+    await handleFeedback(chatId, telegramUser.id, text || '')
     return
   }
   
   if (userState?.current_state === 'waiting_name') {
-    await handleNameInput(chatId, telegramUser.id, text)
+    await handleNameInput(chatId, telegramUser.id, text || '')
     return
   }
   
@@ -188,6 +188,8 @@ async function handleCallbackQuery(callbackQuery: NonNullable<TelegramUpdate['ca
   const data = callbackQuery.data
   const userId = callbackQuery.from.id
   
+  if (!chatId) return
+  
   // 설정 관련 콜백
   if (data === 'settings_notifications') {
     const current = await getUserSetting(userId, 'notifications')
@@ -205,7 +207,7 @@ async function handleCallbackQuery(callbackQuery: NonNullable<TelegramUpdate['ca
     await sendInlineKeyboard(chatId, '언어를 선택하세요:', buttons)
     await answerCallbackQuery(callbackId)
     
-  } else if (data.startsWith('lang_')) {
+  } else if (data?.startsWith('lang_')) {
     const lang = data.replace('lang_', '')
     await saveUserSetting(userId, 'language', lang)
     const langNames: Record<string, string> = {
@@ -230,7 +232,7 @@ async function handleCallbackQuery(callbackQuery: NonNullable<TelegramUpdate['ca
     await sendInlineKeyboard(chatId, '테마를 선택하세요:', buttons)
     await answerCallbackQuery(callbackId)
     
-  } else if (data.startsWith('theme_')) {
+  } else if (data?.startsWith('theme_')) {
     const theme = data.replace('theme_', '')
     await saveUserSetting(userId, 'theme', theme)
     await answerCallbackQuery(callbackId, `테마가 변경되었습니다`)
