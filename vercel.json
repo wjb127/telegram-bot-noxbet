@@ -1,0 +1,12 @@
+{
+  "functions": {
+    "app/api/telegram/webhook/route.ts": {
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "TELEGRAM_BOT_TOKEN": "@telegram_bot_token",
+    "NEXT_PUBLIC_SUPABASE_URL": "@supabase_url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase_anon_key"
+  }
+}
